@@ -1,0 +1,14 @@
+public class CreditorList {
+
+	public Integer id {get; set;}
+	public String creditorName {get; set;}
+	public String firstName {get; set;}
+	public String lastName {get; set;}
+	public Double minPaymentPercentage {get; set;}
+	public Double balance {get; set;}
+    public Boolean isSelected {get;set;}    
+    
+	public static List<CreditorList> parse(String json) {
+		return (List<CreditorList>) System.JSON.deserialize(json, List<CreditorList>.class);
+	}
+}

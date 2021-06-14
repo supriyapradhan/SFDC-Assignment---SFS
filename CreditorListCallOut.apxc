@@ -1,0 +1,97 @@
+public class CreditorListCallOut {
+    public List<CreditorList> wrapper {get;set;}
+    public integer count {get;set;}
+    public integer totalCount {get;set;}
+    public double lstBalanceTotal {get;set;}
+    public Boolean showAddDebt {get;set;}    
+    public String firstName {get; set;}
+	public String lastName {get; set;}
+	public Double minPaymentPercentage {get; set;}
+	public Double balance {get; set;}
+    public String creditorName {get; set;}
+    public integer lstSize  {get;set;}
+    public integer rowId{get;set;}
+    public integer removepos {get;set;}
+    
+    public CreditorListCallOut()
+    {
+        loaddata();
+        lstSize = wrapper.size();
+        showAddDebt = false;
+    }
+    
+    public pagereference getHideSection() {
+		showAddDebt = false;
+		return null;        
+    }
+    
+    public void SelectedRecords() {    
+ 		count = 0;
+        lstBalanceTotal = 0;
+        totalCount = wrapper.size();
+        
+        for(CreditorList wrapAccountObj : wrapper) {
+            if(wrapAccountObj.isSelected == true) {
+                count++;                
+                lstBalanceTotal = lstBalanceTotal + wrapAccountObj.balance;
+            }            
+        }        
+    }
+    
+    public void showAddDebt()
+    {        
+            if(showAddDebt== true){
+             showAddDebt= false;
+         }else{
+             showAddDebt= true;
+         }      
+    }
+
+	public pagereference removeDebt()
+    {        
+       if(wrapper.size()>0 && rowid <> null && removepos <> rowid)
+        {
+            for(Integer i=0;i<wrapper.size();i++)
+            {
+                if(wrapper[i].id==rowId)
+                {
+                    removepos=i;
+                }
+            }            
+            wrapper.remove(removepos);             
+        }        
+        return null;
+    }
+    
+    public PageReference getAddRow()
+    {
+        CreditorList objCreditorList ;
+			objCreditorList = new CreditorList ();       
+        system.debug('lst size = ' + lstSize);
+        if(creditorName <> null && creditorName.length() <> 0 )
+        {            
+            objCreditorList.id = ++lstSize;
+            objCreditorList.creditorName = creditorName;
+            objCreditorList.firstName = firstName;
+            objCreditorList.lastName = lastName;
+            objCreditorList.minPaymentPercentage = minPaymentPercentage;
+	    	objCreditorList.balance = balance; 
+ 			wrapper.add(objCreditorList);            
+        }        
+        return null;
+    }
+
+    public void loaddata() {
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint('https://raw.githubusercontent.com/StrategicFS/Recruitment/master/data.json');
+        request.setMethod('GET');
+        request.setTimeout(120000);
+        Http service = new Http();
+        HttpResponse response = service.send(request);         
+        wrapper = CreditorList.parse(response.getBody());          
+    }
+    
+    public List<CreditorList> getData() {
+        return wrapper;
+    }
+}
