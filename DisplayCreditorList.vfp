@@ -1,0 +1,68 @@
+<apex:page controller="CreditorListCallOut">
+    <apex:form id="frm">
+        <apex:actionfunction name="callfromJS"  action="{!SelectedRecords}" rerender="table2"  /> 
+        <script type="text/javascript">       
+        function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");    
+              for(var i=0; i<inputCheckBox.length; i++){
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){
+                    inputCheckBox[i].checked = obj.checked;                    
+                }
+            }
+            callFromController();       
+        }
+        
+		function callFromController(){
+        	callfromJS();    }
+    </script>
+        <apex:pageBlock title="Show Creditor List">
+                    <apex:pageBlockSection columns="1" id="pb1">                        
+                        <apex:pageBlockTable value="{!Data}" var="item" id="lineItems">                           
+                            <apex:column ><apex:facet name="header">
+                                <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId');"/></apex:facet>
+                                <apex:inputCheckbox value="{!item.isSelected}" id="inputId">
+									<apex:actionSupport event="onclick"
+                        			action="{!SelectedRecords}"
+                        			reRender="table2">
+        							<apex:param id="rowId" name="debtId" value="{!item.id}" assignTo="{!rowId}"/>
+    							</apex:actionSupport>
+						</apex:inputCheckbox></apex:column>    
+                            <apex:column value="{!item.id}" headerValue="Id"  />                            
+                            <apex:column value="{!item.creditorName}" headerValue="Creditor Name" />
+                            <apex:column value="{!item.firstName}" headerValue="First Name" />
+                            <apex:column value="{!item.lastName}" headerValue="Last Name" />
+                            <apex:column value="{!item.minPaymentPercentage}" headerValue="Min Pay %" />
+                            <apex:column value="{!item.balance}" headerValue="Balance" /> 
+                        </apex:pageBlockTable>                            
+                    </apex:pageBlockSection>
+            <apex:pageBlockSection id="table2">
+                        <apex:outputLabel >Check Row Count = <apex:outputText value="{!count}" id="value1" /></apex:outputLabel>
+                        <apex:outputLabel >Total Row Count = <apex:outputText value="{!totalCount}"  id="value2"/></apex:outputLabel>
+                        <apex:outputLabel >Total = $<apex:outputText value="{!lstBalanceTotal}"  id="value3"/></apex:outputLabel>                
+                    </apex:pageBlockSection> 
+            <apex:pageBlockButtons location="bottom" >
+                        <apex:commandButton value="Add Debt" action="{!showAddDebt}" rerender="block"  />                        
+                        <apex:commandButton value="Remove Debt" action="{!removeDebt}"  rerender="pb1"  />
+        </apex:pageBlockButtons>
+            <apex:pageBlock id="block">   
+            <apex:pageblockSection id="addDebt" rendered="{!showAddDebt}"  >
+                <apex:outputLabel value="Creditor Name"/>
+                <apex:inputText value="{!creditorName}"/>
+                <apex:outputLabel value="First Name"/>
+                <apex:inputText value="{!firstname}"/>
+                <apex:outputLabel value="Last Name"/>
+                <apex:inputText value="{!lastname}"/>
+                <apex:outputLabel value="Min Pay %"/>
+                <apex:inputText value="{!minPaymentPercentage}"/>
+                <apex:outputLabel value="Balance"/>
+                <apex:inputText value="{!balance}"/>                
+                        <apex:commandButton value="Save"  action="{!getAddRow}"  reRender="pb1" /> 
+                		<apex:commandButton value="Hide"  action="{!getHideSection}"   />
+            </apex:pageblockSection>       
+		 </apex:pageBlock>
+
+            </apex:pageBlock>
+        
+
+    </apex:form>    
+</apex:page>
